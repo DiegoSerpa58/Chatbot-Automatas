@@ -5,6 +5,7 @@ const sendBtn = document.getElementById("send-btn");
 let userName = null;
 let waitingForContinue = false; // flag para saber si estamos en "y/n"
 
+// Función para agregar mensajes al chat
 function addMessage(text, sender="bot") {
   const div = document.createElement("div");
   div.className = sender;
@@ -12,7 +13,7 @@ function addMessage(text, sender="bot") {
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-
+// Mensaje inicial
 async function sendMessage() {
   const msg = input.value.trim();
   if (!msg) return;

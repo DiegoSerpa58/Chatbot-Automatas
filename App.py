@@ -3,22 +3,25 @@ import re
 
 app = Flask(__name__)
 
-# === Tus bloques de regex tal cual ===
+# Delimitadores y componentes
 WORD = r"[A-Za-z]+"
 NOUN = r"[A-Za-z]+"
 PLURAL = r"[A-Za-z]+s"
 COMP = r"(?:[A-Za-z]+(?:\s+[A-Za-z]+)*)"
 proper = r"(?-i:(?!I\b|You\b|He\b|She\b|It\b|We\b|They\b)[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)"
 
+# Frases comunes
 the_sg = rf"(?:The\s+{NOUN}(?!s\b))"
 the_pl = rf"(?:The\s+{PLURAL})"
 this_that = rf"(?:This|That)\s+{NOUN}(?!s\b)"
 these_those = rf"(?:These|Those)\s+{PLURAL}"
 
+# Función para unir partes con OR en regex
 def OR(*parts): 
     return "(?:" + "|".join(parts) + ")"
 
-# === Patrones como en tu código ===
+# Patrones para las oraciones con "TO BE"
+# patrón para oraciones negativas en presente
 present_neg = OR(
     r"I\s+am\s+not", r"I'm\s+not",
     r"You\s+are\s+not", r"You\s+aren't",
@@ -31,6 +34,7 @@ present_neg = OR(
     rf"{these_those}\s+are\s+not"
 )
 
+# patrón para oraciones afirmativas en presente
 present_aff = OR(
     r"I\s+am",
     r"You\s+are",
@@ -43,6 +47,7 @@ present_aff = OR(
     rf"{these_those}\s+are"
 ) + r"\s+(?!not\b)(?!n't\b)" + COMP
 
+# patrón para oraciones interrogativas en presente
 present_q = OR(
     r"Am\s+I",
     r"Are\s+You",
@@ -57,8 +62,7 @@ present_q = OR(
     r"Is\s+the\s+[A-Za-z]+"
 ) + r"\s+" + COMP
 
-
-
+# patrón para oraciones negativas en pasado
 past_neg = OR(
     r"(?:I|He|She|It)\s+was\s+not", r"(?:I|He|She|It)\s+wasn't",
     r"(?:You|We|They)\s+were\s+not", r"(?:You|We|They)\s+weren't",
@@ -69,6 +73,7 @@ past_neg = OR(
     rf"{these_those}\s+were\s+not"
 )
 
+# Patrón para oraciones afirmativas en pasado
 past_aff = OR(
     r"(?:I|He|She|It)\s+was",
     r"(?:You|We|They)\s+were",
@@ -79,6 +84,7 @@ past_aff = OR(
     rf"{these_those}\s+were"
 ) + r"\s+(?!not\b)(?!n't\b)" + COMP
 
+# Patrón para oraciones interrogativas en pasado
 past_q = OR(
     r"Was\s+(?:I|He|She|It)",
     r"Were\s+(?:You|We|They)",
@@ -92,7 +98,7 @@ past_q = OR(
 ) + r"\s+" + COMP
 
 
-
+# Compilar patrones
 patterns = [
     ("present negative", re.compile(rf"^{present_neg}\s+{COMP}\.$")),
     ("present affirmative", re.compile(rf"^{present_aff}\.$")),
@@ -102,6 +108,7 @@ patterns = [
     ("past question", re.compile(rf"^{past_q}\s*\?$", re.IGNORECASE)),
 ]
 
+# Función para validar la oración
 def validate_sentence(sentence: str) -> str:
     s = " ".join(sentence.strip().split())
     
@@ -118,7 +125,7 @@ def validate_sentence(sentence: str) -> str:
     return "❌ Invalid sentence."
 
 
-
+# Rutas de Flask
 @app.route("/")
 def index():
     return render_template("index.html")
