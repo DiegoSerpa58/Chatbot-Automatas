@@ -52,8 +52,11 @@ present_q = OR(
     rf"Are\s+{the_pl}",
     rf"Is\s+{proper}",
     rf"Is\s+{this_that}",
-    rf"Are\s+{these_those}"
+    rf"Are\s+{these_those}",
+    r"Are\s+the\s+[A-Za-z]+s",
+    r"Is\s+the\s+[A-Za-z]+"
 ) + r"\s+" + COMP
+
 
 
 past_neg = OR(
@@ -83,17 +86,20 @@ past_q = OR(
     rf"Was\s+{proper}",
     rf"Was\s+{this_that}",
     rf"Were\s+{the_pl}",
-    rf"Were\s+{these_those}"
+    rf"Were\s+{these_those}",
+    r"Was\s+the\s+[A-Za-z]+",
+    r"Were\s+the\s+[A-Za-z]+s"
 ) + r"\s+" + COMP
+
 
 
 patterns = [
     ("present negative", re.compile(rf"^{present_neg}\s+{COMP}\.$")),
     ("present affirmative", re.compile(rf"^{present_aff}\.$")),
-    ("present question", re.compile(rf"^{present_q}\s*\?$")),
+    ("present question", re.compile(rf"^{present_q}\s*\?$", re.IGNORECASE)),
     ("past negative", re.compile(rf"^{past_neg}\s+{COMP}\.$")),
     ("past affirmative", re.compile(rf"^{past_aff}\.$")),
-    ("past question", re.compile(rf"^{past_q}\s*\?$")),
+    ("past question", re.compile(rf"^{past_q}\s*\?$", re.IGNORECASE)),
 ]
 
 def validate_sentence(sentence: str) -> str:
