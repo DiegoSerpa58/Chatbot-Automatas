@@ -37,6 +37,11 @@ async function sendMessage() {
 
   // Si aún no se sabe el nombre
   if (!userName) {
+    if (!isValidName(msg)) {
+      addMessage("⚠️ Please enter a valid name (start with uppercase, letters only, no spaces or special characters).");
+      input.value = "";
+      return;
+    }
     userName = msg;
     addMessage(`Nice to meet you, ${userName}! Please type a sentence in English using the verb TO BE (present or past).`);
   } else {
@@ -49,12 +54,19 @@ async function sendMessage() {
     const data = await res.json();
     addMessage(data.result);
 
-    // Después de validar, preguntar si quiere seguir
-    addMessage("❓ Do you want to continue? (y/n)");
-    waitingForContinue = true;
+    // Solo preguntar si quiere continuar si la sentencia es correcta
+    if (data.result.startsWith("✅")) {
+      addMessage("❓ Do you want to continue? (y/n)");
+      waitingForContinue = true;
+    }
   }
 
   input.value = "";
+}
+
+// Función para validar nombre (solo letras, sin espacios ni caracteres especiales, y empieza con mayúscula)
+function isValidName(name) {
+  return /^[A-Z][a-zA-Z]*$/.test(name);
 }
 
 sendBtn.addEventListener("click", sendMessage);
