@@ -5,10 +5,10 @@ app = Flask(__name__)
 
 # Delimitadores y componentes
 WORD = r"[A-Za-z]+"
-NOUN = r"[A-Za-z]+"
-PLURAL = r"[A-Za-z]+s"
-COMP = r"(?:[A-Za-z]+(?:\s+[A-Za-z]+)*)"
-proper = r"(?-i:(?!I\b|You\b|He\b|She\b|It\b|We\b|They\b)[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)"
+NOUN = r"[A-Za-z][A-Za-z']*"   
+PLURAL = r"[A-Za-z][A-Za-z']*s"
+COMP = r"(?:[A-Za-z']+(?:\s+[A-Za-z']+)*)"  
+proper = r"(?-i:(?!I\b|You\b|He\b|She\b|It\b|We\b|They\b)[A-Z][a-z]+s?(?:\s+[A-Z][a-z]+s?)*)"
 
 # Frases comunes
 the_sg = r"(?:The\s+(?!\w+s\b)[A-Za-z]+)"   # asegura que NO termine en 's'
@@ -22,16 +22,17 @@ def OR(*args):
 
 # Patrones para preguntas en presente
 present_q = OR(
-    r"Am\s+I",
-    r"Are\s+You",
-    r"Is\s+(?:He|She|It)",
-    r"Are\s+(?:We|They)",
-    rf"Is\s+{the_sg}",
-    rf"Are\s+{the_pl}",
-    rf"Is\s+{proper}",
-    rf"Is\s+{this_that}",
-    rf"Are\s+{these_those}"
+    r"Am\s+I(?:\s+not)?",
+    r"Are\s+You(?:\s+not)?",
+    r"Is\s+(?:He|She|It)(?:\s+not)?",
+    r"Are\s+(?:We|They)(?:\s+not)?",
+    rf"Is\s+{the_sg}(?:\s+not)?",
+    rf"Are\s+{the_pl}(?:\s+not)?",
+    rf"Is\s+{proper}(?:\s+not)?",
+    rf"Is\s+{this_that}(?:\s+not)?",
+    rf"Are\s+{these_those}(?:\s+not)?"
 ) + r"\s+" + COMP
+
 
 # Patrones para afirmativas en presente
 present_aff = OR(
@@ -57,17 +58,17 @@ present_neg = OR(
     rf"{proper}\s+is\s+not",
     rf"{this_that}\s+is\s+not",
     rf"{these_those}\s+are\s+not"
-)
+) + r"\s+" + COMP
 
 # Patrones para preguntas en pasado
 past_q = OR(
-    r"Was\s+(?:I|He|She|It)",
-    r"Were\s+(?:You|We|They)",
-    rf"Was\s+{the_sg}",
-    rf"Were\s+{the_pl}",
-    rf"Was\s+{proper}",
-    rf"Was\s+{this_that}",
-    rf"Were\s+{these_those}"
+    r"Was\s+(?:I|He|She|It)(?:\s+not)?",
+    r"Were\s+(?:You|We|They)(?:\s+not)?",
+    rf"Was\s+{the_sg}(?:\s+not)?",
+    rf"Were\s+{the_pl}(?:\s+not)?",
+    rf"Was\s+{proper}(?:\s+not)?",
+    rf"Was\s+{this_that}(?:\s+not)?",
+    rf"Were\s+{these_those}(?:\s+not)?"
 ) + r"\s+" + COMP
 
 # Patrones para afirmativas en pasado
@@ -90,7 +91,7 @@ past_neg = OR(
     rf"{proper}\s+was\s+not",
     rf"{this_that}\s+was\s+not",
     rf"{these_those}\s+were\s+not"
-)
+) + r"\s+" + COMP
 
 # Compilar patrones
 patterns = [
