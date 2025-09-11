@@ -95,10 +95,10 @@ past_neg = OR(
 
 # Compilar patrones
 patterns = [
-    ("present negative", re.compile(rf"^{present_neg}\s+{COMP}\.$")),
+    ("present negative", re.compile(rf"^{present_neg}\.$")),
     ("present affirmative", re.compile(rf"^{present_aff}\.$")),
     ("present question", re.compile(rf"^{present_q}\s*\?$", re.IGNORECASE)),
-    ("past negative", re.compile(rf"^{past_neg}\s+{COMP}\.$")),
+    ("past negative", re.compile(rf"^{past_neg}\.$")),
     ("past affirmative", re.compile(rf"^{past_aff}\.$")),
     ("past question", re.compile(rf"^{past_q}\s*\?$", re.IGNORECASE)),
 ]
